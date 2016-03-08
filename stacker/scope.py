@@ -17,4 +17,3 @@ class Scope(dict):
         return value
 
 
-

@@ -5,6 +5,7 @@ from collections import deque
 from functools import wraps
 
 from stacker.errors import StackerSyntaxError
+from stacker.scope import Scope
 
 __all__ = ['Stacker', 'Procedure']
 
@@ -97,10 +98,12 @@ class Stacker (object):
             'not': _not
         }
 
-        if kwargs:
-            base.update(kwargs)
+        scope = Scope(None, **base)
 
-        return base
+        if kwargs:
+            scope.update(kwargs)
+
+        return scope
 
     def parser(self, inp):
         if inp.startswith('{') and inp.endswith('}'):
@@ -139,13 +142,11 @@ class Stacker (object):
         else:
             self.eval_exp(parsed_inp)
 
-
-
     def eval_exp(self, atoms):
         if atoms is None:
             return None
 
-        func = self.env().get(atoms[0], None)
+        func = self.env().find_in_scope(atoms[0])
         return func(*atoms[1:])
 
 
