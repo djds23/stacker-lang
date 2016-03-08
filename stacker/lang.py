@@ -1,8 +1,9 @@
 # coding: utf-8
-# http://beautifulracket.com/first-lang.html
 import re
 from collections import deque
 from functools import wraps
+
+__all__ = ['Stacker', 'Procedure']
 
 class Procedure (object):
     def __init__(self, inp):
@@ -23,7 +24,9 @@ class FuncMixin(object):
         return wrapper
 
 class Stacker (FuncMixin):
-    STACK = deque()
+
+    def __init__(self):
+        self.STACK = deque()
 
     def stack_head(self):
         try:
@@ -32,7 +35,7 @@ class Stacker (FuncMixin):
             value = None
         return value
 
-    def env(self):
+    def env(self, **kwargs):
 
         def _not(*args):
             value = self.STACK.popleft()
@@ -45,7 +48,7 @@ class Stacker (FuncMixin):
         def _or (*args):
             value1 = self.STACK.popleft()
             value2 = self.STACK.popleft()
-            if value1 is False or value2 is False:
+            if value1 is False and value2 is False:
                 self.STACK.appendleft(False)
             else:
                 self.STACK.appendleft(True)
@@ -87,8 +90,7 @@ class Stacker (FuncMixin):
         def push(*args):
             self.STACK.appendleft(args[0])
             return self.STACK
-
-        return {
+        env = {
             'push': push,
             'drop': drop,
             'dup': dup,
@@ -99,6 +101,11 @@ class Stacker (FuncMixin):
             'or': _or,
             'not': _not
         }
+
+        if kwargs:
+            env.update(kwargs)
+
+        return env
 
     def parser(self, inp):
         if inp.startswith('{') and inp.endswith('}'):
@@ -159,48 +166,3 @@ class StackerTypeError (Exception):
 class StackEatenUp (Exception):
     pass
 
-def test():
-    s = Stacker()
-    s.eval('push 1')
-    s.eval('push 2')
-    assert s.STACK == deque([2, 1])
-    print 'pass 1'
-
-    s.eval('swap void')
-    assert s.STACK == deque([1, 2])
-    print 'pass 2'
-
-    s.eval('push 3')
-    s.eval('rot void')
-    assert s.STACK == deque([1, 2, 3])
-    print 'pass 3'
-
-    s.eval('drop void')
-    assert s.STACK == deque([2, 3])
-    print 'pass 4'
-
-    s.eval('over void')
-    assert s.STACK == deque([2, 3, 2])
-    print 'pass 5'
-
-    s.eval('drop void')
-    assert s.STACK == deque([3, 2])
-    print 'pass 6'
-
-    s.eval('eq 3')
-    assert s.STACK == deque([True, 2])
-    print 'pass 7'
-
-    s.eval('or void')
-    assert s.STACK == deque([True])
-    print 'pass 8'
-
-    s.eval('not void')
-    assert s.STACK == deque([False])
-    print 'pass 9'
-
-    # anon funcs
-    s.eval('{drop void; push 9; push 9;}')
-    print s.STACK
-
-test()
