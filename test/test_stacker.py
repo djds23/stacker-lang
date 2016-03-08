@@ -68,6 +68,19 @@ class TestStackerLangSpec(unittest.TestCase):
         self.assertEqual(self.stacker.STACK, deque([True]))
 
 
+class TestImplementation(unittest.TestCase):
+
+    def setUp(self):
+        self.stacker = Stacker()
+        self.assertEqual(self.stacker.STACK, deque([]))
+
+    def test_env(self):
+        env = self.stacker.env(new_arg=True)
+        new_arg = env.get('new_arg', False)
+        self.assertTrue(new_arg)
+
+
+
 if __name__ == '__main__':
     unittest.main()
 

@@ -90,7 +90,8 @@ class Stacker (FuncMixin):
         def push(*args):
             self.STACK.appendleft(args[0])
             return self.STACK
-        env = {
+
+        base = {
             'push': push,
             'drop': drop,
             'dup': dup,
@@ -103,9 +104,9 @@ class Stacker (FuncMixin):
         }
 
         if kwargs:
-            env.update(kwargs)
+            base.update(kwargs)
 
-        return env
+        return base
 
     def parser(self, inp):
         if inp.startswith('{') and inp.endswith('}'):
