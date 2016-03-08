@@ -116,7 +116,6 @@ class Stacker (FuncMixin):
         matcher = re.compile('{} (\d+|\w+)'.format(funcs))
         expression = matcher.match(inp)
         if not expression:
-            print inp
             raise StackerSyntaxError('invalid syntax: {}'.format(inp))
         return map(self.atomizer, expression.group(0).split())
 
