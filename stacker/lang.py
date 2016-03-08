@@ -1,7 +1,10 @@
 # coding: utf-8
 import re
+
 from collections import deque
 from functools import wraps
+
+from stacker.errors import StackerSyntaxError
 
 __all__ = ['Stacker', 'Procedure']
 
@@ -145,15 +148,4 @@ class Stacker (object):
         func = self.env().get(atoms[0], None)
         return func(*atoms[1:])
 
-class StackerSyntaxError (Exception):
-    pass
-
-class StackerArgumentError (Exception):
-    pass
-
-class StackerTypeError (Exception):
-    pass
-
-class StackEatenUp (Exception):
-    pass
 
