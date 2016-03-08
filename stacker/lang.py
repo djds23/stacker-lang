@@ -5,6 +5,7 @@ from functools import wraps
 
 __all__ = ['Stacker', 'Procedure']
 
+
 class Procedure (object):
     def __init__(self, inp):
         self.inp = inp
@@ -12,18 +13,8 @@ class Procedure (object):
     def expression_list(self):
         return list(map(lambda s: s.strip(), self.inp[1:-1].split(';')))
 
-class FuncMixin(object):
-    def void_function(self, f):
-        @wraps(f)
-        def wrapper(*args):
-            if any(args):
-                raise StackerArgumentError('{} takes no arguments'
-                                           ' but void'
-                                           .format(f.__name__))
-            return f(*args)
-        return wrapper
 
-class Stacker (FuncMixin):
+class Stacker (object):
 
     def __init__(self):
         self.STACK = deque()
