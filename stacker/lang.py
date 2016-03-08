@@ -10,7 +10,7 @@ class Procedure (object):
         self.inp = inp
 
     def expression_list(self):
-        return map(lambda s: s.strip(), self.inp[1:-1].split(';'))
+        return list(map(lambda s: s.strip(), self.inp[1:-1].split(';')))
 
 class FuncMixin(object):
     def void_function(self, f):
@@ -117,7 +117,7 @@ class Stacker (FuncMixin):
         expression = matcher.match(inp)
         if not expression:
             raise StackerSyntaxError('invalid syntax: {}'.format(inp))
-        return map(self.atomizer, expression.group(0).split())
+        return [self.atomizer(atom) for atom in expression.group(0).split()]
 
     def atomizer(self, atom):
         try:
