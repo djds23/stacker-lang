@@ -11,6 +11,6 @@ python:
   - "3.5-dev" # 3.5 development branch
   - "nightly" # currently points to 3.6-devscript: python -m unittest discover test --verbose
 
-script: python -m unittest discover test --verbose
+script: python -m unittest discover tests --verbose
 notifications:
   email: false
