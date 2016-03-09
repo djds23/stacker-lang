@@ -13,7 +13,7 @@ Install with: ``python setup.py install``
 
 This should install the bin ``stacker-repl`` in your current environment.
 
-.. code-block::
+.. ::
    =>push 9
    [9]
    =>push 10
