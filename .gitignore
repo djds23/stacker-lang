@@ -1,3 +1,7 @@
 *.pyc
 __pycache__
 .tox/
+build/
+dist/
+stacker_lang.egg-info/
+

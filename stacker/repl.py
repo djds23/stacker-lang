@@ -14,8 +14,12 @@ def repl():
         if user_input == 'exit':
             sys.exit()
 
-        interpreter.eval(user_input)
-        print(interpreter.STACK)
+        try:
+            interpreter.eval(user_input)
+        except Exception as e:
+            print(e)
+        finally:
+            print(list(interpreter.STACK))
 
 
 

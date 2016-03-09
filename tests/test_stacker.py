@@ -65,6 +65,7 @@ class TestStackerLangSpec(unittest.TestCase):
 
     def test_code_block(self):
         self.stacker.eval('{ push 9; drop void; push 9; eq 9;}')
+
         self.assertEqual(self.stacker.STACK, deque([True]))
 
 
