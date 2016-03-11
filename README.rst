@@ -28,3 +28,6 @@ The repl will look something like this::
    =>drop void
    [1000, 10]
 
+Check this project out on PyPi_.
+
+.. _PyPi: https://pypi.python.org/pypi/stacker-lang
