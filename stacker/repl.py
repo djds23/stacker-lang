@@ -4,9 +4,22 @@ import sys
 from stacker.lang import Stacker
 
 
+
+
 def repl():
     pp = pprint.PrettyPrinter(indent=4)
     interpreter = Stacker()
+
+    def _exit(*args):
+        sys.exit()
+
+    def _help(*args):
+        pp.pprint(interpreter.scope)
+
+    interpreter.scope.update({
+        'help': _help,
+        'exit':_exit,
+    })
 
     try:
         input = raw_input
@@ -15,14 +28,10 @@ def repl():
 
     while True:
         user_input = input('=>')
-        if user_input == 'exit':
-            sys.exit()
-
         try:
             interpreter.eval(user_input, interpreter.scope)
         except Exception as e:
-            print(e)
+            pp.pprint(e)
         finally:
             pp.pprint(list(interpreter.STACK))
-            pp.pprint(interpreter.scope)
 
