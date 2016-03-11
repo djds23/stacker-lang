@@ -11,8 +11,10 @@ __all__ = ['Stacker', 'Procedure']
 
 
 class Procedure (object):
-    def __init__(self, inp):
+    def __init__(self, inp, name, scope):
         self.inp = inp
+        self.name = name
+        self.scope = scope
 
     def expression_list(self):
         return list(map(lambda s: s.strip(), self.inp[1:-1].split(';')))
@@ -22,6 +24,7 @@ class Stacker (object):
 
     def __init__(self):
         self.STACK = deque()
+        self.scope = self.env()
 
     def stack_head(self):
         try:
@@ -105,9 +108,17 @@ class Stacker (object):
 
         return scope
 
-    def parser(self, inp):
+    def parse_procedure(self, inp, scope):
+        name_regex = re.compile(r'\w+')
+        name = name_regex.match(inp[1:]).group(0)
+        return Procedure(inp[len(name) + 1:], name, scope)
+
+    def parser(self, inp, scope):
+        inp = inp.strip()
         if inp.startswith('{') and inp.endswith('}'):
-            return Procedure(inp)
+            return Procedure(inp, None, scope)
+        if inp.startswith('/') and inp.endswith(';}'):
+            return self.parse_procedure(inp, scope)
         if len(inp) == 0:
             return None
         funcs = '(' + '|'.join(self.env().keys()) + ')'
@@ -133,20 +144,26 @@ class Stacker (object):
 
         return value
 
-    def eval(self, inp):
-        parsed_inp = self.parser(inp)
+    def eval(self, inp, scope):
+        parsed_inp = self.parser(inp, scope)
         if isinstance(parsed_inp, Procedure):
-            for exp in parsed_inp.expression_list():
-                atoms = self.parser(exp)
-                self.eval_exp(atoms)
+            if parsed_inp.name is None:
+                for exp in parsed_inp.expression_list():
+                    atoms = self.parser(exp, scope)
+                    self.eval_exp(atoms, scope)
+            else:
+                new_scope = {
+                    parsed_inp.name: parsed_inp
+                }
+                scope.update(new_scope)
         else:
-            self.eval_exp(parsed_inp)
+            self.eval_exp(parsed_inp, scope)
 
-    def eval_exp(self, atoms):
+    def eval_exp(self, atoms, scope):
         if atoms is None:
             return None
 
-        func = self.env().find_in_scope(atoms[0])
+        func = scope.find_in_scope(atoms[0])
         return func(*atoms[1:])
 
 
