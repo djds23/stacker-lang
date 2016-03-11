@@ -17,7 +17,7 @@ class Procedure (object):
         self.scope = scope
 
     def expression_list(self):
-        return list(map(lambda s: s.strip(), self.inp[1:-1].split(';')))
+        return  [exp for exp in self.inp[1:-1].split(';') if exp]
 
 
 class Stacker (object):
@@ -111,9 +111,12 @@ class Stacker (object):
     def parse_procedure(self, inp, scope):
         name_regex = re.compile(r'\w+')
         name = name_regex.match(inp[1:]).group(0)
-        return Procedure(inp[len(name) + 1:], name, scope)
+        return Procedure(inp[len(name) + 2:], name, scope)
 
     def parser(self, inp, scope):
+        if inp is None:
+            return None
+
         inp = inp.strip()
         if inp.startswith('{') and inp.endswith('}'):
             return Procedure(inp, None, scope)
@@ -121,6 +124,7 @@ class Stacker (object):
             return self.parse_procedure(inp, scope)
         if len(inp) == 0:
             return None
+
         funcs = '(' + '|'.join(scope.keys()) + ')'
         matcher = re.compile('{} (\d+|\w+)'.format(funcs))
         expression = matcher.match(inp)
@@ -163,7 +167,11 @@ class Stacker (object):
         if atoms is None:
             return None
 
-        func = scope.find_in_scope(atoms[0])
-        return func(*atoms[1:])
-
+        scoped_variable = scope.find_in_scope(atoms[0])
+        if isinstance(scoped_variable, Procedure):
+            for exp in scoped_variable.expression_list():
+                atoms = self.parser(exp, scoped_variable.scope)
+                self.eval_exp(atoms, scope)
+            return None
+        return scoped_variable(*atoms[1:])
 

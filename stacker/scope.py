@@ -1,3 +1,4 @@
+# coding: utf-8
 from stacker.errors import StackerUndefinedVariable
 
 class Scope(dict):

@@ -1,7 +1,11 @@
+# coding: utf-8
+import pprint
 import sys
 from stacker.lang import Stacker
 
+
 def repl():
+    pp = pprint.PrettyPrinter(indent=4)
     interpreter = Stacker()
 
     try:
@@ -19,8 +23,6 @@ def repl():
         except Exception as e:
             print(e)
         finally:
-            print(list(interpreter.STACK))
-            print(interpreter.scope)
-
-
+            pp.pprint(list(interpreter.STACK))
+            pp.pprint(interpreter.scope)
 
