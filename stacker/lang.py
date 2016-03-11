@@ -121,7 +121,7 @@ class Stacker (object):
             return self.parse_procedure(inp, scope)
         if len(inp) == 0:
             return None
-        funcs = '(' + '|'.join(self.env().keys()) + ')'
+        funcs = '(' + '|'.join(scope.keys()) + ')'
         matcher = re.compile('{} (\d+|\w+)'.format(funcs))
         expression = matcher.match(inp)
         if not expression:

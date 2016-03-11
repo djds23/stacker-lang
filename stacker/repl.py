@@ -15,11 +15,12 @@ def repl():
             sys.exit()
 
         try:
-            interpreter.eval(user_input)
+            interpreter.eval(user_input, interpreter.scope)
         except Exception as e:
             print(e)
         finally:
             print(list(interpreter.STACK))
+            print(interpreter.scope)
 
 
 
