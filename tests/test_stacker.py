@@ -3,7 +3,7 @@ from collections import deque
 
 import unittest
 
-from stacker.lang import Stacker
+from stacker.lang import Stacker, Procedure
 
 
 class TestStackerLangSpec(unittest.TestCase):
@@ -69,8 +69,37 @@ class TestStackerLangSpec(unittest.TestCase):
             '{ push 9; drop void; push 9; eq 9;}',
             self.stacker.scope
         )
+        self.assertTrue(isinstance(self.stacker.STACK[0], Procedure))
 
+        self.stacker.eval(
+            'call void',
+            self.stacker.scope
+        )
         self.assertEqual(self.stacker.STACK, deque([True]))
+
+    def test_if_false_cond(self):
+        self.stacker.eval('push 100', self.stacker.scope)
+        self.stacker.eval('eq 99', self.stacker.scope)
+        self.stacker.eval(
+            '{ push 9; push 9; push 9;}',
+            self.stacker.scope
+        )
+        self.assertEqual(len(self.stacker.STACK), 2)
+
+        self.stacker.eval('if void', self.stacker.scope)
+        self.assertEqual(len(self.stacker.STACK), 0)
+
+    def test_if_true_cond(self):
+        self.stacker.eval('push 100', self.stacker.scope)
+        self.stacker.eval('eq 100', self.stacker.scope)
+        self.stacker.eval(
+            '{ push 9; push 9; push 9;}',
+            self.stacker.scope
+        )
+        self.assertEqual(len(self.stacker.STACK), 2)
+
+        self.stacker.eval('if void', self.stacker.scope)
+        self.assertEqual(self.stacker.STACK, deque([9, 9, 9]))
 
 
 class TestImplementation(unittest.TestCase):

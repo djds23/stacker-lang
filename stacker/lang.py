@@ -35,6 +35,19 @@ class Stacker (object):
 
     def env(self, **kwargs):
 
+        def _call(*args):
+            proc = self.STACK.popleft()
+            for exp in proc.expression_list():
+                self.eval(exp, proc.scope)
+
+        def _if(*args):
+            proc = self.STACK.popleft()
+            cond = self.STACK.popleft()
+            if cond is False:
+                return None
+            for exp in proc.expression_list():
+                self.eval(exp, proc.scope)
+
         def _not(*args):
             value = self.STACK.popleft()
             if value is False:
@@ -98,7 +111,9 @@ class Stacker (object):
             'rot': rot,
             'eq': _eq,
             'or': _or,
-            'not': _not
+            'not': _not,
+            'if': _if,
+            'call': _call,
         }
 
         scope = Scope(None, **base)
@@ -152,9 +167,7 @@ class Stacker (object):
         parsed_inp = self.parser(inp, scope)
         if isinstance(parsed_inp, Procedure):
             if parsed_inp.name is None:
-                for exp in parsed_inp.expression_list():
-                    atoms = self.parser(exp, scope)
-                    self.eval_exp(atoms, scope)
+                self.STACK.appendleft(parsed_inp)
             else:
                 new_scope = {
                     parsed_inp.name: parsed_inp
