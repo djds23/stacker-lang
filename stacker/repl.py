@@ -4,8 +4,6 @@ import sys
 from stacker.lang import Stacker
 
 
-
-
 def repl():
     pp = pprint.PrettyPrinter(indent=4)
     interpreter = Stacker()
