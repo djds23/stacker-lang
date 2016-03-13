@@ -35,6 +35,34 @@ class Stacker (object):
 
     def env(self, **kwargs):
 
+        def gte(*args):
+            other = args[0]
+            value = self.STACK.popleft()
+            out = value >= other
+            self.STACK.appendleft(out)
+            return self.STACK
+
+        def gt(*args):
+            other = args[0]
+            value = self.STACK.popleft()
+            out = value > other
+            self.STACK.appendleft(out)
+            return self.STACK
+
+        def lte(*args):
+            other = args[0]
+            value = self.STACK.popleft()
+            out = value <= other
+            self.STACK.appendleft(out)
+            return self.STACK
+
+        def lt(*args):
+            other = args[0]
+            value = self.STACK.popleft()
+            out = value < other
+            self.STACK.appendleft(out)
+            return self.STACK
+
         def _call(*args):
             proc = self.STACK.popleft()
             for exp in proc.expression_list():
@@ -114,6 +142,10 @@ class Stacker (object):
             'not': _not,
             'if': _if,
             'call': _call,
+            'gte': gte,
+            'lte': lte,
+            'gt': gt,
+            'lt': lt,
         }
 
         scope = Scope(None, **base)
