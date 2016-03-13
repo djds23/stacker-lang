@@ -1,9 +1,11 @@
 # coding: utf-8
 from collections import deque
+from os import path
 
 import unittest
 
 from stacker.lang import Stacker, Procedure
+from stacker.core import from_file
 
 
 class TestStackerLangSpec(unittest.TestCase):
@@ -156,6 +158,16 @@ class TestImplementation(unittest.TestCase):
         env = self.stacker.env(new_arg=True)
         new_arg = env.get('new_arg', False)
         self.assertTrue(new_arg)
+
+    def test_files(self):
+        filepath = path.abspath(
+            path.join(
+                path.abspath(path.dirname(__file__)),
+                path.join('test_sl_files', 'test_1.sl')
+            )
+        )
+        stacker = from_file(filepath)
+        self.assertEqual(stacker.STACK, deque([100]))
 
 
 if __name__ == '__main__':

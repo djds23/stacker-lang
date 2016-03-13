@@ -46,7 +46,8 @@ def from_file(abs_path):
     with open(abs_path, 'r') as inp_file:
         for line in inp_file.readlines():
             stacker.eval(str(line), stacker.scope)
-        print(stacker.STACK)
+
+    return stacker
 
 def parse_args():
     arg_parser = argparse.ArgumentParser(
@@ -72,7 +73,6 @@ def main():
     args = parse_args()
     if args.file:
         filepath = path.abspath(args.file)
-        print(filepath)
         from_file(filepath)
     else:
         repl()

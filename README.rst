@@ -9,7 +9,7 @@ A quick and dirty attempt at a stack oriented language
 
 Install with: ``pip install stacker-lang``
 
-This should install the bin ``stacker-repl`` command in your current environment.
+This should install the bin ``stacker-cli`` command in your current environment.
 
 The repl will look something like this::
 
