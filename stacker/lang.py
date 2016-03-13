@@ -19,8 +19,104 @@ class Procedure (object):
     def expression_list(self):
         return  [exp for exp in self.inp[1:-1].split(';') if exp]
 
+class LocalsMixin (object):
 
-class Stacker (object):
+    def push(self, *args):
+        self.STACK.appendleft(args[0])
+        return self.STACK
+
+    def gte(self, *args):
+        other = args[0]
+        value = self.STACK.popleft()
+        out = value >= other
+        self.STACK.appendleft(out)
+        return self.STACK
+
+    def gt(self, *args):
+        other = args[0]
+        value = self.STACK.popleft()
+        out = value > other
+        self.STACK.appendleft(out)
+        return self.STACK
+
+    def lte(self, *args):
+        other = args[0]
+        value = self.STACK.popleft()
+        out = value <= other
+        self.STACK.appendleft(out)
+        return self.STACK
+
+    def lt(self, *args):
+        other = args[0]
+        value = self.STACK.popleft()
+        out = value < other
+        self.STACK.appendleft(out)
+        return self.STACK
+
+    def _call(self, *args):
+        proc = self.STACK.popleft()
+        for exp in proc.expression_list():
+            self.eval(exp, proc.scope)
+
+    def _if(self, *args):
+        proc = self.STACK.popleft()
+        cond = self.STACK.popleft()
+        if cond is False:
+            return None
+        for exp in proc.expression_list():
+            self.eval(exp, proc.scope)
+
+    def _not(self, *args):
+        value = self.STACK.popleft()
+        if value is False:
+            self.STACK.appendleft(True)
+        else:
+            self.STACK.appendleft(False)
+        return self.STACK
+
+    def _or (self, *args):
+        value1 = self.STACK.popleft()
+        value2 = self.STACK.popleft()
+        if value1 is False and value2 is False:
+            self.STACK.appendleft(False)
+        else:
+            self.STACK.appendleft(True)
+        return self.STACK
+
+    def _eq(self, *args):
+        other = args[0]
+        value = self.STACK.popleft()
+        out = other == value
+        self.STACK.appendleft(out)
+        return self.STACK
+
+    def rot(self, *args):
+        value = self.STACK.popleft()
+        self.STACK.append(value)
+        return self.STACK
+
+    def over(self, *args):
+        value = self.stack_head()
+        self.STACK.append(value)
+        return self.STACK
+
+    def drop(self, *args):
+        self.STACK.popleft()
+        return self.STACK
+
+    def swap(self, *args):
+        value1 = self.STACK.popleft()
+        value2 = self.STACK.popleft()
+        self.STACK.appendleft(value1)
+        self.STACK.appendleft(value2)
+        return self.STACK
+
+    def dup(self, *args):
+        value = self.stack_head()
+        self.STACK.appendleft(value)
+        return self.STACK
+
+class Stacker (LocalsMixin):
 
     def __init__(self):
         self.STACK = deque()
@@ -34,118 +130,22 @@ class Stacker (object):
         return value
 
     def env(self, **kwargs):
-
-        def gte(*args):
-            other = args[0]
-            value = self.STACK.popleft()
-            out = value >= other
-            self.STACK.appendleft(out)
-            return self.STACK
-
-        def gt(*args):
-            other = args[0]
-            value = self.STACK.popleft()
-            out = value > other
-            self.STACK.appendleft(out)
-            return self.STACK
-
-        def lte(*args):
-            other = args[0]
-            value = self.STACK.popleft()
-            out = value <= other
-            self.STACK.appendleft(out)
-            return self.STACK
-
-        def lt(*args):
-            other = args[0]
-            value = self.STACK.popleft()
-            out = value < other
-            self.STACK.appendleft(out)
-            return self.STACK
-
-        def _call(*args):
-            proc = self.STACK.popleft()
-            for exp in proc.expression_list():
-                self.eval(exp, proc.scope)
-
-        def _if(*args):
-            proc = self.STACK.popleft()
-            cond = self.STACK.popleft()
-            if cond is False:
-                return None
-            for exp in proc.expression_list():
-                self.eval(exp, proc.scope)
-
-        def _not(*args):
-            value = self.STACK.popleft()
-            if value is False:
-                self.STACK.appendleft(True)
-            else:
-                self.STACK.appendleft(False)
-            return self.STACK
-
-        def _or (*args):
-            value1 = self.STACK.popleft()
-            value2 = self.STACK.popleft()
-            if value1 is False and value2 is False:
-                self.STACK.appendleft(False)
-            else:
-                self.STACK.appendleft(True)
-            return self.STACK
-
-        def _eq(*args):
-            other = args[0]
-            value = self.STACK.popleft()
-            out = other == value
-            self.STACK.appendleft(out)
-            return self.STACK
-
-        def rot(*args):
-            value = self.STACK.popleft()
-            self.STACK.append(value)
-            return self.STACK
-
-        def over(*args):
-            value = self.stack_head()
-            self.STACK.append(value)
-            return self.STACK
-
-        def drop(*args):
-            self.STACK.popleft()
-            return self.STACK
-
-        def swap(*args):
-            value1 = self.STACK.popleft()
-            value2 = self.STACK.popleft()
-            self.STACK.appendleft(value1)
-            self.STACK.appendleft(value2)
-            return self.STACK
-
-        def dup(*args):
-            value = self.stack_head()
-            self.STACK.appendleft(value)
-            return self.STACK
-
-        def push(*args):
-            self.STACK.appendleft(args[0])
-            return self.STACK
-
         base = {
-            'push': push,
-            'drop': drop,
-            'dup': dup,
-            'swap': swap,
-            'over': over,
-            'rot': rot,
-            'eq': _eq,
-            'or': _or,
-            'not': _not,
-            'if': _if,
-            'call': _call,
-            'gte': gte,
-            'lte': lte,
-            'gt': gt,
-            'lt': lt,
+            'push': self.push,
+            'drop': self.drop,
+            'dup': self.dup,
+            'swap': self.swap,
+            'over': self.over,
+            'rot': self.rot,
+            'eq': self._eq,
+            'or': self._or,
+            'not': self._not,
+            'if': self._if,
+            'call': self._call,
+            'gte': self.gte,
+            'lte': self.lte,
+            'gt': self.gt,
+            'lt': self.lt,
         }
 
         scope = Scope(None, **base)

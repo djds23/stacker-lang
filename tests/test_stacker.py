@@ -101,6 +101,50 @@ class TestStackerLangSpec(unittest.TestCase):
         self.stacker.eval('if void', self.stacker.scope)
         self.assertEqual(self.stacker.STACK, deque([9, 9, 9]))
 
+    def test_gte(self):
+        self.stacker.eval('push 100', self.stacker.scope)
+        self.stacker.eval('gte 100', self.stacker.scope)
+
+        self.assertEqual(self.stacker.STACK, deque([True]))
+        self.stacker.eval('drop void', self.stacker.scope)
+
+        self.stacker.eval('push 100', self.stacker.scope)
+        self.stacker.eval('gte 10', self.stacker.scope)
+        self.assertEqual(self.stacker.STACK, deque([True]))
+
+    def test_gt(self):
+        self.stacker.eval('push 100', self.stacker.scope)
+        self.stacker.eval('gt 100', self.stacker.scope)
+
+        self.assertEqual(self.stacker.STACK, deque([False]))
+        self.stacker.eval('drop void', self.stacker.scope)
+
+        self.stacker.eval('push 100', self.stacker.scope)
+        self.stacker.eval('gt 10', self.stacker.scope)
+        self.assertEqual(self.stacker.STACK, deque([True]))
+
+    def test_lte(self):
+        self.stacker.eval('push 100', self.stacker.scope)
+        self.stacker.eval('lte 100', self.stacker.scope)
+
+        self.assertEqual(self.stacker.STACK, deque([True]))
+        self.stacker.eval('drop void', self.stacker.scope)
+
+        self.stacker.eval('push 100', self.stacker.scope)
+        self.stacker.eval('lte 10', self.stacker.scope)
+        self.assertEqual(self.stacker.STACK, deque([False]))
+
+    def test_lt(self):
+        self.stacker.eval('push 10', self.stacker.scope)
+        self.stacker.eval('lt 100', self.stacker.scope)
+
+        self.assertEqual(self.stacker.STACK, deque([True]))
+        self.stacker.eval('drop void', self.stacker.scope)
+
+        self.stacker.eval('push 100', self.stacker.scope)
+        self.stacker.eval('lt 10', self.stacker.scope)
+        self.assertEqual(self.stacker.STACK, deque([False]))
+
 
 class TestImplementation(unittest.TestCase):
 
@@ -112,7 +156,6 @@ class TestImplementation(unittest.TestCase):
         env = self.stacker.env(new_arg=True)
         new_arg = env.get('new_arg', False)
         self.assertTrue(new_arg)
-
 
 
 if __name__ == '__main__':
