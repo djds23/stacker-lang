@@ -48,7 +48,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'stacker-repl=stacker:repl',
+            'stacker-cli=stacker:main',
         ],
     },
 )
