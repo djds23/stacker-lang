@@ -1,6 +1,7 @@
 # coding: utf-8
 from stacker.errors import StackerUndefinedVariable
 
+
 class Scope(dict):
     def __init__(self, outer_scope, **kwargs):
         self.outer_scope = outer_scope

@@ -17,9 +17,10 @@ class Procedure (object):
         self.scope = scope
 
     def expression_list(self):
-        return  [exp for exp in self.inp[1:-1].split(';') if exp]
+        return [exp for exp in self.inp[1:-1].split(';') if exp]
 
-class LocalsMixin (object):
+
+class LocalsMixin(object):
 
     def push(self, *args):
         self.STACK.appendleft(args[0])
@@ -74,7 +75,7 @@ class LocalsMixin (object):
             self.STACK.appendleft(False)
         return self.STACK
 
-    def _or (self, *args):
+    def _or(self, *args):
         value1 = self.STACK.popleft()
         value2 = self.STACK.popleft()
         if value1 is False and value2 is False:
@@ -116,7 +117,8 @@ class LocalsMixin (object):
         self.STACK.appendleft(value)
         return self.STACK
 
-class Stacker (LocalsMixin):
+
+class Stacker(LocalsMixin):
 
     def __init__(self):
         self.STACK = deque()

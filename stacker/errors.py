@@ -1,18 +1,23 @@
 class StackerUndefinedVariable (Exception):
     pass
 
-class StackerArgumentError (Exception):
+
+class StackerArgumentError(Exception):
     pass
 
-class StackerFileNotFound (Exception):
+
+class StackerFileNotFound(Exception):
     pass
 
-class StackerSyntaxError (Exception):
+
+class StackerSyntaxError(Exception):
     pass
 
-class StackerTypeError (Exception):
+
+class StackerTypeError(Exception):
     pass
 
-class StackEatenUp (Exception):
+
+class StackEatenUp(Exception):
     pass
 

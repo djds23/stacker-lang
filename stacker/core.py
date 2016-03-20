@@ -9,6 +9,7 @@ import stacker
 from stacker.lang import Stacker
 from stacker.errors import StackerFileNotFound
 
+
 def repl():
     pp = pprint.PrettyPrinter(indent=4)
     interpreter = Stacker()
@@ -38,6 +39,7 @@ def repl():
         finally:
             pp.pprint(list(interpreter.STACK))
 
+
 def from_file(abs_path):
     stacker = Stacker()
     if not path.exists(abs_path):
@@ -48,6 +50,7 @@ def from_file(abs_path):
             stacker.eval(str(line), stacker.scope)
 
     return stacker
+
 
 def parse_args():
     arg_parser = argparse.ArgumentParser(
@@ -68,6 +71,7 @@ def parse_args():
     )
 
     return arg_parser.parse_args()
+
 
 def main():
     args = parse_args()
