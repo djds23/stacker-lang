@@ -2,6 +2,7 @@ import argparse
 import pprint
 import sys
 
+from builtins import input
 from codecs import open
 from os import path
 
@@ -24,11 +25,6 @@ def repl():
         'help': _help,
         'exit':_exit,
     })
-
-    try:
-        input = raw_input
-    except NameError:
-        pass
 
     while True:
         user_input = input('=>')
